@@ -122,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _counter = 0;
                   setState(() {
                     // just refresh
-                    /// 此时Scaffold都是重建的，为什么data的值不是重新初始化的0 ???
+                    /// 此时Scaffold都是重建的，为什么此时(重建后)snapshot.data的值是之前的值 它从哪里获取的 ???
                   });
                 },
                 icon: const Icon(Icons.refresh)),
