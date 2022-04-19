@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -49,17 +51,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  StreamController<int>? starCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +61,18 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+
+    /// 1. new StreamController
+    print("wtf: new StreamController");
+    StreamController<int> starCtrl = StreamController();
+    this.starCtrl = starCtrl;
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        toolbarHeight: 0,
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -95,21 +94,41 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
             Text(
-              '$_counter',
+              '"now: "$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            StreamBuilder<int>(
+              stream: starCtrl.stream,
+              initialData: 0,
+              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                int data = snapshot.data ?? -1;
+                return Text(
+                  '"data: "$data',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _counter++;
+                    this.starCtrl?.add(_counter);
+                  });
+                },
+                icon: const Icon(Icons.add)),
+            IconButton(
+                onPressed: () {
+                  _counter = 0;
+                  setState(() {
+                    // just refresh
+                    /// 此时Scaffold都是重建的，为什么data的值不是重新初始化的0 ???
+                  });
+                },
+                icon: const Icon(Icons.refresh)),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
