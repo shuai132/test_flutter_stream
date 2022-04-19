@@ -51,6 +51,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int _id = 0;
   StreamController<int>? starCtrl;
 
   @override
@@ -66,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print("wtf: new StreamController");
     StreamController<int> starCtrl = StreamController();
     this.starCtrl = starCtrl;
+    print("wtf1: stream: ${starCtrl.stream.hashCode}");
 
     return Scaffold(
       appBar: AppBar(
@@ -99,12 +101,16 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headline4,
             ),
             StreamBuilder<int>(
-              stream: starCtrl.stream,
+              stream: (){
+                print("wtf2: stream: ${starCtrl.stream.hashCode}");
+                return starCtrl.stream;
+              }(),
               initialData: 0,
               builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                print("wtf3: snapshot: ${snapshot.hashCode}");
                 int data = snapshot.data ?? -1;
                 return Text(
-                  '"data: "$data',
+                  '"id: $_id  data: "$data',
                   style: Theme.of(context).textTheme.headline4,
                 );
               },
